@@ -1,9 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, {ReactNode, useMemo} from "react";
+import React, {ReactNode, useCallback, useMemo, useRef, useState} from "react";
 import PageWithNavbar from "@/components/PageWithNavBar";
 import {Issues, PageIssues} from "@/components/PageIssues";
+import {AnnotatedPdfViewerHandle} from "@/components/AnnotatedPdfViewer";
+import {IssueNavigator} from "@/components/IssueNavigator";
 
 const AnnotatedPdfViewer = dynamic(
     () => import("@/components/AnnotatedPdfViewer"),
@@ -45,12 +47,29 @@ export default function Review() {
         return result;
     }, [issuesByPageNumber]);
 
+    const pdfViewerRef = useRef<AnnotatedPdfViewerHandle>(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const jumpToPage = useCallback((page: number) => {
+        pdfViewerRef.current?.jumpToPage(page);
+    }, []);
+
     return (
-        <PageWithNavbar navbarContent={<></>}>
-            <AnnotatedPdfViewer
-                pdfPath={pdfPath}
-                annotationsByPageNumber={renderedIssuesByPageNumber}
+        <PageWithNavbar>
+            <IssueNavigator
+                currentPage={currentPage}
+                pageNumbersWithIssues={Object.keys(issuesByPageNumber).map(Number)}
+                jumpToPage={jumpToPage}
             />
+            <div className="pt-14">
+                <AnnotatedPdfViewer
+                    ref={pdfViewerRef}
+                    onPageFocus={setCurrentPage}
+                    pdfPath={pdfPath}
+                    annotationsByPageNumber={renderedIssuesByPageNumber}
+                />
+            </div>
         </PageWithNavbar>
     );
 }
