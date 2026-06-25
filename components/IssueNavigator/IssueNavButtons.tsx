@@ -14,7 +14,6 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
         if (page < currentPage && (previousPageWithIssues === null || page > previousPageWithIssues)) {
             previousPageWithIssues = page;
         }
-
         if (page > currentPage && (nextPageWithIssues === null || page < nextPageWithIssues)) {
             nextPageWithIssues = page;
         }
@@ -26,10 +25,10 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
 
     const buttonClassNames = `
         flex items-center justify-center w-7 h-7
-        text-gray-500
-        hover:bg-gray-100 hover:text-gray-800
-        active:bg-gray-200 active:text-gray-900
-        disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-transparent
+        text-white/80
+        hover:bg-white/20 hover:text-white
+        active:bg-white/30 active:text-white
+        disabled:text-white/30 disabled:cursor-not-allowed disabled:bg-transparent
         transition-colors duration-100
     `;
 
@@ -38,7 +37,7 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
             label: "Previous page with issues",
             pageNumber: previousPageWithIssues,
             path: "M2 6.5L5 3.5L8 6.5",
-            className: `${buttonClassNames} border-r border-gray-300`,
+            className: `${buttonClassNames} border-r border-white/30`,
         },
         {
             label: "Next page with issues",
@@ -49,14 +48,13 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
     ];
 
     return (
-        <div className="flex items-center gap-2.5 font-medium text-gray-700">
-            <p className="text-sm tabular-nums">
+        <div className="flex items-center gap-2.5 font-medium">
+            <p className="text-sm tabular-nums text-white/90">
                 {currentPageHasIssues
                     ? `Issue ${aboveCount + 1} of ${pageNumbersWithIssues.length}`
                     : "Jump to issues"}
             </p>
-
-            <div className="flex rounded-full border border-gray-300 overflow-hidden shadow-sm">
+            <div className="flex rounded-full border border-white/30 overflow-hidden shadow-sm">
                 {buttons.map(({label, pageNumber, path, className}) => (
                     <button
                         key={label}
