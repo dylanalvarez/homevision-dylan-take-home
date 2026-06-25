@@ -50,6 +50,7 @@ export default function Review() {
     const pdfViewerRef = useRef<AnnotatedPdfViewerHandle>(null);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [pageCount, setPageCount] = useState<number | null>(null);
 
     const jumpToPage = useCallback((page: number) => {
         pdfViewerRef.current?.jumpToPage(page);
@@ -59,6 +60,7 @@ export default function Review() {
         <PageWithNavbar>
             <IssueNavigator
                 currentPage={currentPage}
+                pageCount={pageCount}
                 pageNumbersWithIssues={Object.keys(issuesByPageNumber).map(Number)}
                 jumpToPage={jumpToPage}
             />
@@ -66,6 +68,7 @@ export default function Review() {
                 <AnnotatedPdfViewer
                     ref={pdfViewerRef}
                     onPageFocus={setCurrentPage}
+                    onPageCountChange={setPageCount}
                     pdfPath={pdfPath}
                     annotationsByPageNumber={renderedIssuesByPageNumber}
                 />

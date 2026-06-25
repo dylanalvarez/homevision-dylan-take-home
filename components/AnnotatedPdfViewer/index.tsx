@@ -22,6 +22,7 @@ interface AnnotatedPdfViewerProps {
     pdfPath: string;
     annotationsByPageNumber: PageAnnotations;
     onPageFocus?: (page: number) => void;
+    onPageCountChange?: (pageCount: number) => void;
 }
 
 const UPDATE_PDF_PAGE_WIDTH_DELAY_MS = 150;
@@ -37,16 +38,17 @@ const calculatePdfPageWidth = () =>
         : MAX_PDF_WIDTH_PX;
 
 const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfViewerProps>(
-    function AnnotatedPdfViewer({pdfPath, annotationsByPageNumber, onPageFocus}, ref) {
+    function AnnotatedPdfViewer({pdfPath, annotationsByPageNumber, onPageFocus, onPageCountChange}, ref) {
         const [pageCount, setPageCount] = useState<number | null>(null);
         const [documentLoadError, setDocumentLoadError] = useState<string | null>(null);
 
         const onDocumentLoadSuccess = useCallback(
             ({numPages}: { numPages: number }) => {
                 setPageCount(numPages);
+                onPageCountChange?.(numPages);
                 setDocumentLoadError(null);
             },
-            []
+            [onPageCountChange]
         );
 
         const onDocumentLoadError = useCallback(({message}: Error) => {
@@ -140,6 +142,7 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
                         }}
                         data-page-number={pageNumber}
                         className="flex flex-col items-center scroll-mt-32 rounded shadow-lg overflow-hidden mb-8"
+                        style={annotationNode ? {border: "solid 1px red"} : {}}
                     >
                         {annotationNode !== undefined && (
                             <AnnotationContainer width={pdfPageWidth}>
