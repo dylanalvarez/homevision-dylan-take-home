@@ -24,25 +24,54 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
     const belowCount = pageNumbersWithIssues.filter(n => n > currentPage).length;
     const currentPageHasIssues = pageNumbersWithIssues.length !== aboveCount + belowCount;
 
+    const buttonClassNames = `
+        flex items-center justify-center w-7 h-7
+        text-gray-500
+        hover:bg-gray-100 hover:text-gray-800
+        active:bg-gray-200 active:text-gray-900
+        disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-transparent
+        transition-colors duration-100
+    `;
+
+    const buttons = [
+        {
+            label: "Previous page with issues",
+            pageNumber: previousPageWithIssues,
+            path: "M2 6.5L5 3.5L8 6.5",
+            className: `${buttonClassNames} border-r border-gray-300`,
+        },
+        {
+            label: "Next page with issues",
+            pageNumber: nextPageWithIssues,
+            path: "M2 3.5L5 6.5L8 3.5",
+            className: buttonClassNames,
+        },
+    ];
+
     return (
-        <div className="flex items-center gap-1 font-medium text-gray-800">
-            <p>{currentPageHasIssues ? `Issue ${aboveCount + 1} of ${pageNumbersWithIssues.length}` : "Jump to issues"}</p>
-            <button
-                onClick={() => previousPageWithIssues !== null && onNavigate(previousPageWithIssues)}
-                disabled={previousPageWithIssues === null}
-                aria-label="Previous page with issues"
-                className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-                ▲
-            </button>
-            <button
-                onClick={() => nextPageWithIssues !== null && onNavigate(nextPageWithIssues)}
-                disabled={nextPageWithIssues === null}
-                aria-label="Next page with issues"
-                className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-                ▼
-            </button>
+        <div className="flex items-center gap-2.5 font-medium text-gray-700">
+            <p className="text-sm tabular-nums">
+                {currentPageHasIssues
+                    ? `Issue ${aboveCount + 1} of ${pageNumbersWithIssues.length}`
+                    : "Jump to issues"}
+            </p>
+
+            <div className="flex rounded-full border border-gray-300 overflow-hidden shadow-sm">
+                {buttons.map(({label, pageNumber, path, className}) => (
+                    <button
+                        key={label}
+                        onClick={() => pageNumber !== null && onNavigate(pageNumber)}
+                        disabled={pageNumber === null}
+                        aria-label={label}
+                        className={className}
+                    >
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                            <path d={path} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"
+                                  strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                ))}
+            </div>
         </div>
     );
 }

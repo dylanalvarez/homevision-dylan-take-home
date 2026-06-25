@@ -5,6 +5,6 @@ interface IssueNavSummaryProps {
 
 export function IssueNavSummary({currentPage, pageCount}: IssueNavSummaryProps) {
     return (
-        <span className="font-medium text-gray-800">Page {currentPage} of {pageCount}</span>
+        <span className="font-medium text-sm text-gray-700">Page {currentPage} of {pageCount}</span>
     );
 }

@@ -142,7 +142,7 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
                         }}
                         data-page-number={pageNumber}
                         className="flex flex-col items-center scroll-mt-32 rounded shadow-lg overflow-hidden mb-8"
-                        style={annotationNode ? {border: "solid 1px red"} : {}}
+                        style={{border: `solid 1px ${annotationNode ? "red" : "transparent"}`}}
                     >
                         {annotationNode !== undefined && (
                             <AnnotationContainer width={pdfPageWidth}>
