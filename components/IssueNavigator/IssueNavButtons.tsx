@@ -25,7 +25,7 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
 
     const buttonClassNames = `
         flex items-center justify-center w-7 h-7
-        text-white/80
+        text-white/80 cursor-pointer
         hover:bg-white/20 hover:text-white
         active:bg-white/30 active:text-white
         disabled:text-white/30 disabled:cursor-not-allowed disabled:bg-transparent

@@ -15,7 +15,7 @@ interface IssueNavigatorProps {
 export function IssueNavigator({currentPage, pageCount, pageNumbersWithIssues, jumpToPage}: IssueNavigatorProps) {
     return (
         <div
-            className="fixed top-14 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-[#4f46e5] text-white shadow-md">
+            className="fixed top-14 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-base-purple text-white shadow-md">
             <IssueNavSummary
                 currentPage={currentPage}
                 pageCount={pageCount}

@@ -6,6 +6,8 @@ import PageWithNavbar from "@/components/PageWithNavBar";
 import {Issues, PageIssues} from "@/components/PageIssues";
 import {AnnotatedPdfViewerHandle} from "@/components/AnnotatedPdfViewer";
 import {IssueNavigator} from "@/components/IssueNavigator";
+import {BottomActionBar} from "@/app/review/BottomActionBar";
+import {useRouter} from "next/navigation";
 
 const AnnotatedPdfViewer = dynamic(
     () => import("@/components/AnnotatedPdfViewer"),
@@ -56,6 +58,8 @@ export default function Review() {
         pdfViewerRef.current?.jumpToPage(page);
     }, []);
 
+    const router = useRouter();
+
     return (
         <PageWithNavbar>
             <IssueNavigator
@@ -73,6 +77,8 @@ export default function Review() {
                     annotationsByPageNumber={renderedIssuesByPageNumber}
                 />
             </div>
+            <BottomActionBar hasIssues={Object.keys(issuesByPageNumber).length > 0} onUpload={() => router.push("/")}
+                             onSubmit={() => alert("TBD: Submit page")}/>
         </PageWithNavbar>
     );
 }
