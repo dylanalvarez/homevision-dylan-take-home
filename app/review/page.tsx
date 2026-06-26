@@ -68,7 +68,7 @@ export default function Review() {
                 pageNumbersWithIssues={Object.keys(issuesByPageNumber).map(Number)}
                 jumpToPage={jumpToPage}
             />
-            <div className="pt-14">
+            <div className="pt-14 pb-14">
                 <AnnotatedPdfViewer
                     ref={pdfViewerRef}
                     onPageFocus={setCurrentPage}
