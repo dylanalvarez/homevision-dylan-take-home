@@ -1,4 +1,5 @@
 import React from "react";
+import {ChevronDown, ChevronUp} from "lucide-react";
 
 interface IssueNavButtonsProps {
     currentPage: number;
@@ -36,13 +37,13 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
         {
             label: "Previous page with issues",
             pageNumber: previousPageWithIssues,
-            path: "M2 6.5L5 3.5L8 6.5",
+            icon: <ChevronUp size={12} strokeWidth={2.5} aria-hidden="true"/>,
             className: `${buttonClassNames} border-r border-white/30`,
         },
         {
             label: "Next page with issues",
             pageNumber: nextPageWithIssues,
-            path: "M2 3.5L5 6.5L8 3.5",
+            icon: <ChevronDown size={12} strokeWidth={2.5} aria-hidden="true"/>,
             className: buttonClassNames,
         },
     ];
@@ -55,7 +56,7 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
                     : "Jump to issues"}
             </p>
             <div className="flex rounded-full border border-white/30 overflow-hidden shadow-sm">
-                {buttons.map(({label, pageNumber, path, className}) => (
+                {buttons.map(({label, pageNumber, icon, className}) => (
                     <button
                         key={label}
                         onClick={() => pageNumber !== null && onNavigate(pageNumber)}
@@ -63,10 +64,7 @@ export function IssueNavButtons({currentPage, pageNumbersWithIssues, onNavigate}
                         aria-label={label}
                         className={className}
                     >
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                            <path d={path} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"
-                                  strokeLinejoin="round"/>
-                        </svg>
+                        {icon}
                     </button>
                 ))}
             </div>
