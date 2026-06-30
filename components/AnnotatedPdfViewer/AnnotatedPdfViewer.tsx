@@ -63,11 +63,44 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
 
         const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
-        useImperativeHandle(ref, () => ({
-            jumpToPage: (page) => {
-                pageRefs.current[page]?.scrollIntoView({behavior: "instant"});
-            },
-        }));
+        // Guards setState calls from in-flight timers/observers that resolve after unmount.
+        const isMountedRef = useRef(true);
+
+        useEffect(() => {
+            isMountedRef.current = true;
+            return () => {
+                isMountedRef.current = false;
+            };
+        }, []);
+
+        const onPageFocusRef = useRef(onPageFocus);
+        useEffect(() => {
+            onPageFocusRef.current = onPageFocus;
+        }, [onPageFocus]);
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                jumpToPage: (page: number) => {
+                    if (!Number.isInteger(page) || page < 1 || (pageCount !== null && page > pageCount)) {
+                        console.warn(
+                            `AnnotatedPdfViewer.jumpToPage: "${page}" is not a valid page number` +
+                            (pageCount !== null ? ` (document has ${pageCount} page(s)).` : ".")
+                        );
+                        return;
+                    }
+
+                    const target = pageRefs.current[page];
+                    if (!target) {
+                        console.warn(`AnnotatedPdfViewer.jumpToPage: page ${page} is not currently rendered.`);
+                        return;
+                    }
+
+                    target.scrollIntoView({behavior: "instant"});
+                },
+            }),
+            [pageCount]
+        );
 
         useEffect(() => {
             if (!onPageFocus || pageCount === null) return;
@@ -85,35 +118,55 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
                         .filter(([, ratio]) => ratio > 0)
                         .sort(([, a], [, b]) => b - a)[0];
 
-                    if (mostVisible) {
-                        onPageFocus(Number(mostVisible[0]));
+                    if (mostVisible && isMountedRef.current) {
+                        onPageFocusRef.current?.(Number(mostVisible[0]));
                     }
                 },
                 {threshold: [0, 0.1, 0.25, 0.5, 0.75, 1.0]}
             );
 
-            Object.values(pageRefs.current).forEach((el) => {
-                if (el) observer.observe(el);
-            });
+            const observedElements = Object.values(pageRefs.current).filter(
+                (el): el is HTMLDivElement => el !== null
+            );
+            observedElements.forEach((el) => observer.observe(el));
 
-            return () => observer.disconnect();
+            return () => {
+                observedElements.forEach((el) => observer.unobserve(el));
+                observer.disconnect();
+            };
         }, [pageCount, onPageFocus]);
 
         useEffect(() => {
+            const clearPendingTimeouts = () => {
+                if (removeResizingPlaceholderTimeout.current) {
+                    clearTimeout(removeResizingPlaceholderTimeout.current);
+                    removeResizingPlaceholderTimeout.current = null;
+                }
+                if (updatePdfPageWidthTimeout.current) {
+                    clearTimeout(updatePdfPageWidthTimeout.current);
+                    updatePdfPageWidthTimeout.current = null;
+                }
+            };
+
             const onResize = () => {
                 const newPdfPageWidth = calculatePdfPageWidth();
 
-                setResizingPlaceholderWidth(newPdfPageWidth);
+                if (isMountedRef.current) {
+                    setResizingPlaceholderWidth(newPdfPageWidth);
+                }
 
-                if (removeResizingPlaceholderTimeout.current) clearTimeout(removeResizingPlaceholderTimeout.current);
-                if (updatePdfPageWidthTimeout.current) clearTimeout(updatePdfPageWidthTimeout.current);
+                clearPendingTimeouts();
 
                 updatePdfPageWidthTimeout.current = setTimeout(() => {
-                    setPdfPageWidth(newPdfPageWidth);
+                    if (isMountedRef.current) {
+                        setPdfPageWidth(newPdfPageWidth);
+                    }
                 }, UPDATE_PDF_PAGE_WIDTH_DELAY_MS);
 
                 removeResizingPlaceholderTimeout.current = setTimeout(() => {
-                    setResizingPlaceholderWidth(null);
+                    if (isMountedRef.current) {
+                        setResizingPlaceholderWidth(null);
+                    }
                 }, REMOVE_PLACEHOLDER_DELAY_MS);
             };
 
@@ -121,8 +174,7 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
 
             return () => {
                 window.removeEventListener("resize", onResize);
-                if (removeResizingPlaceholderTimeout.current) clearTimeout(removeResizingPlaceholderTimeout.current);
-                if (updatePdfPageWidthTimeout.current) clearTimeout(updatePdfPageWidthTimeout.current);
+                clearPendingTimeouts();
             };
         }, []);
 

@@ -27,7 +27,7 @@ To run linter and tests:
 
 ```bash
 npm run lint
-npm run test
+npm run test:coverage
 ```
 
 ---
@@ -144,8 +144,8 @@ happiest with in this project.
 ## Testing
 
 Tests use **Jest** and are focused on the two most complex components — `AnnotatedPdfViewer` and `IssueNavigator`. For a
-take-home project this coverage feels proportionate; in a production codebase I'd expand it, though the remaining
-components are simple enough that there's not a great deal left to cover.
+take-home project this coverage (~60% of branches across all files) feels proportionate; in a production codebase I'd
+expand it, though the remaining components are simple enough that there's not a great deal left to cover.
 
 ---
 

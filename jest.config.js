@@ -8,6 +8,10 @@ const createJestConfig = nextJest({dir: './'});
 const config = {
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+    collectCoverageFrom: [
+        "app/**/*.{js,jsx,ts,tsx}",
+        "components/**/*.{js,jsx,ts,tsx}",
+    ],
 };
 
 module.exports = createJestConfig(config);
