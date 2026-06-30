@@ -9,7 +9,7 @@ alongside backend-detected issues, letting users review them before submitting a
 
 ## Preview
 
-<video src="docs/demo.mp4" autoplay loop muted playsinline></video>
+https://github.com/user-attachments/assets/82e5f3ca-f578-4e84-aff7-863c62c61b93
 
 ---
 
