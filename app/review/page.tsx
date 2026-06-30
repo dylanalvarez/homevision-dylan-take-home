@@ -133,6 +133,12 @@ export default function Review() {
 
     const router = useRouter();
 
+    const hasBlockingIssues = Object.values(issuesByPageNumber).some(
+        (issues) =>
+            (issues.critical?.length ?? 0) > 0 ||
+            (issues.major?.length ?? 0) > 0
+    );
+
     return (
         <PageWithNavbar>
             <IssueNavigator
@@ -150,7 +156,8 @@ export default function Review() {
                     annotationsByPageNumber={renderedIssuesByPageNumber}
                 />
             </div>
-            <BottomActionBar hasIssues={Object.keys(issuesByPageNumber).length > 0} onUpload={() => router.push("/")}
+            <BottomActionBar hasBlockingIssues={hasBlockingIssues}
+                             onUpload={() => router.push("/")}
                              onSubmit={() => alert("TBD: Submit page")}/>
         </PageWithNavbar>
     );

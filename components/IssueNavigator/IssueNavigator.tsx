@@ -20,11 +20,13 @@ export function IssueNavigator({currentPage, pageCount, pageNumbersWithIssues, j
                 currentPage={currentPage}
                 pageCount={pageCount}
             />
-            <IssueNavButtons
-                currentPage={currentPage}
-                pageNumbersWithIssues={pageNumbersWithIssues}
-                onNavigate={jumpToPage}
-            />
+            {pageNumbersWithIssues.length > 0 && (
+                <IssueNavButtons
+                    currentPage={currentPage}
+                    pageNumbersWithIssues={pageNumbersWithIssues}
+                    onNavigate={jumpToPage}
+                />
+            )}
         </div>
     );
 }
