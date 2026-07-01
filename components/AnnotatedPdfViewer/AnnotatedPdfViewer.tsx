@@ -61,6 +61,8 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
         const removeResizingPlaceholderTimeout = useRef<NodeJS.Timeout | null>(null);
         const updatePdfPageWidthTimeout = useRef<NodeJS.Timeout | null>(null);
 
+        const lastViewportWidthRef = useRef<number | null>(null);
+
         const pageRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
         // Guards setState calls from in-flight timers/observers that resolve after unmount.
@@ -137,6 +139,8 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
         }, [pageCount, onPageFocus]);
 
         useEffect(() => {
+            lastViewportWidthRef.current = document.documentElement.clientWidth;
+
             const clearPendingTimeouts = () => {
                 if (removeResizingPlaceholderTimeout.current) {
                     clearTimeout(removeResizingPlaceholderTimeout.current);
@@ -149,6 +153,15 @@ const AnnotatedPdfViewer = forwardRef<AnnotatedPdfViewerHandle, AnnotatedPdfView
             };
 
             const onResize = () => {
+                const newViewportWidth = document.documentElement.clientWidth;
+
+                if (newViewportWidth === lastViewportWidthRef.current) {
+                    // If only height changed the PDF won't be redrawn
+                    // so we skip the placeholder entirely.
+                    return;
+                }
+                lastViewportWidthRef.current = newViewportWidth;
+
                 const newPdfPageWidth = calculatePdfPageWidth();
 
                 if (isMountedRef.current) {
